@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block title -%}
+    {% if title %}
+      <title>{{ title }} - Microblog</title>
+      {% else %}
+      <title>Welcome to Microblog</title>
+    {% endif %}
+    {% endblock %}
+</head>
+<body>
+    <div>Microblog:
+        <a href="{{ url_for('index') }}">Home</a>
+        {% if current_user.is_anonymous %}
+        <a href="{{ url_for('login') }}">Login</a>
+        {% else %}
+        <a href="{{ url_for('user', username=current_user.username) }}">Profile</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+        {% endif %}
+        <a href="{{ url_for('about') }}">About</a>
+    </div>
+        <hr>
+    {%- block mainmenu -%}
+      <ul>
+          {% for m in menu -%}
+          <li>{{m}}</li>
+          {% endfor -%}
+      </ul>
+         {% endblock mainmenu -%}
+    {% if title -%}
+      <h1>{{title}}</h1>
+         {% else -%}
+      <h1>Welcome to Microblog</h1>
+         {% endif -%}
+        <hr>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+</body>
+</html>
