@@ -83,20 +83,16 @@ ___
 - [Create virtual environment and activate it](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment) and [install dependencies](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#using-requirements-files).
 
     ```
-    $ python -m venv env
-    $ source env/bin/activate
-    $ pip install --upgrade pip && pip install -r requirements.txt
-    $ flask db init
-    $ flask db migrate
-    $ flask db upgrade
     $ flask run --port 5001 --debug - для отладки, при запуске в прод убрать
-  
-    для работы с миграциями:
+    $ python -m venv env (если желание работать через виртуальную среду)
+    $ source env/bin/activate (если желание работать через виртуальную среду)
+    $ pip install --upgrade pip && pip install -r requirements.txt
+    $ flask db init (для активации работы с миграциями БД)
+    $ flask db migrate (создает схему миграции)
+    $ flask db upgrade (актуализирует БД по последней схеме миграции)
     $ flask db downgrade - для отката версии назад
-  
-    $ flaskdb downgrade base и затем $ flaskdb upgrade - для "реинкорнации" структуры базы данных к последней схеме миграции
-  
-  
+    $ flaskdb downgrade base и затем $ flaskdb upgrade - для "реинкорнации" (чистая база) структуры базы данных к последней схеме миграции
+    
     ```
 
 
