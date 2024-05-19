@@ -1,42 +1,93 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, flash, redirect, url_for, request
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, EmptyForm, PostForm
 from flask_login import current_user, login_user, logout_user, login_required
 import sqlalchemy as sa
-from app.models import User
+from app.models import User, Post
 from urllib.parse import urlsplit
 from datetime import datetime, timezone
 
 menu = ["Микроблог", "Информация о сайте", "Обратная связь"]
 
 
-@app.route('/')
-@app.route('/index')
+@app.route('/', methods=['GET', 'POST'])
+@app.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
+    """Главная страница с отображением постов подписок и возможностью отправлять посты"""
     # user = {'username': 'Miguel'}
-    posts = [
-        {
-            'author': {'username': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'username': 'Susan'},
-            'body': 'I am glad to see your posts here!'
-        },
-        {
-            'author': {'username': 'Mindi'},
-            'body': 'Wow! Hey there!'
-        }
-    ]
-    return render_template('index.html', title='Home Page', posts=posts, menu=menu)
+    form = PostForm()
+    # если пользователь заполнили и отправил пост, то делаем перенаправление на index страницу
+    # по POST-Redirect-GET паттерну, иначе вероятно будет дублирование отправки поста или запрос браузера
+    # такого действия с предупреждением
+    if form.validate_on_submit():
+        post = Post(body=form.post.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('Your post is now live!')
+        return redirect(url_for('index'))
+
+    # фейковые посты для отладки:
+    # posts = [
+    #     {
+    #         'author': {'username': 'John'},
+    #         'body': 'Beautiful day in Portland!'
+    #     },
+    #     {
+    #         'author': {'username': 'Susan'},
+    #         'body': 'I am glad to see your posts here!'
+    #     },
+    #     {
+    #         'author': {'username': 'Mindi'},
+    #         'body': 'Wow! Hey there!'
+    #     }
+    # ]
+
+    # ниже запрашиваем посты и с помощью paginate отображаемя настраиваемое количество постов на страницу с возможностью
+    # получить следующую порцию постов на следующей странице
+    page = request.args.get('page', 1, type=int)
+    posts = db.paginate(current_user.following_posts(), page=page, per_page=app.config['POSTS_PER_PAGE_INDEX'],
+                        error_out=False)
+    next_url = url_for('index', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('index', page=posts.prev_num) if posts.has_prev else None
+
+    # posts = db.session.scalars(current_user.following_posts()).all()  # данное строка будет выводить
+    # все посты попдписок
+
+    return render_template('index.html',
+                           title='Home Page',
+                           form=form,
+                           posts=posts.items,  # posts=posts тоже работает
+                           menu=menu,
+                           next_url=next_url,
+                           prev_url=prev_url)
     # return render_template('index.html', title='Home Page', user=user, posts=posts, menu=menu)
+
+
+@app.route('/explore')
+@login_required
+def explore():
+    """Страница как лента всех постов (не только подписок)"""
+    query = sa.select(Post).order_by(Post.timestamp.desc())
+    posts = db.session.scalars(query).all()
+
+    page = request.args.get('page', 1, type=int)
+    query = sa.select(Post).order_by(Post.timestamp.desc())
+    posts = db.paginate(query, page=page, per_page=app.config['POSTS_PER_PAGE_EXPLORE'], error_out=False)
+    next_url = url_for('explore', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('explore', page=posts.prev_num) if posts.has_prev else None
+    return render_template('index.html',
+                           title='Explore',
+                           posts=posts.items,  # posts=posts тоже работает
+                           next_url=next_url,
+                           prev_url=prev_url)
 
 
 @app.route("/about")
 @login_required
 def about():
+    """Просто какая-то страница с информацией, возможно с инструкцией и правилами микроблога"""
     return render_template('about.html', title='About')
 
 
@@ -96,7 +147,9 @@ def register():
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
-    return render_template('register.html', title='Register', form=form)
+    return render_template('register.html',
+                           title='Register',
+                           form=form)
 
 
 @app.route('/user/<username>')
@@ -107,9 +160,21 @@ def user(username):
         {'author': user, 'body': 'Test post #1'},
         {'author': user, 'body': 'Test post #2'}
     ]
-
+    page = request.args.get('page', 1, type=int)
+    query = user.posts.select().order_by(Post.timestamp.desc())
+    posts = db.paginate(query,
+                        page=page,
+                        per_page=app.config['POSTS_PER_PAGE_PROFILE'],
+                        error_out=False)
+    next_url = url_for('user', username=user.username, page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('user', username=user.username, page=posts.prev_num) if posts.has_prev else None
     form = EmptyForm()
-    return render_template('user.html', user=user, posts=posts, form=form)
+    return render_template('user.html',
+                           user=user,
+                           posts=posts.items,
+                           next_url=next_url,
+                           prev_url=prev_url,
+                           form=form)
 
 
 @app.before_request
