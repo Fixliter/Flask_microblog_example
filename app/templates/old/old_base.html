@@ -1,10 +1,10 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% if title %}
-    <title>{{ title }} - Microblog</title>
+    <title>{{ title }} - Microblog Flask test app</title>
     {% else %}
     <title>Welcome to Microblog</title>
     {% endif %}
@@ -13,8 +13,8 @@
         rel="stylesheet"
         integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
         crossorigin="anonymous">
-  </head>
-  <body>
+</head>
+<  <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container">
         <a class="navbar-brand" href="{{ url_for('index') }}">Microblog</a>
@@ -49,14 +49,6 @@
           </ul>
         </div>
       </div>
-      <hr>
-      {%- block mainmenu -%}
-      <ul>
-          {% for m in menu -%}
-          <li>{{m}}</li>
-          {% endfor -%}
-      </ul>
-         {% endblock mainmenu -%}
     </nav>
     <div class="container mt-3">
       {% with messages = get_flashed_messages() %}
@@ -73,5 +65,5 @@
         integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
         crossorigin="anonymous">
     </script>
-  </body>
+    </body>
 </html>

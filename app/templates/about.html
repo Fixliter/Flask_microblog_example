@@ -1,8 +1,96 @@
-<!doctype html>
 {% extends "base.html" %}
+{% import "bootstrap_wtf.html" as wtf %}
+
 {% block content %}
 {{ super() }}
+    <span class="badge rounded-pill text-bg-success">Gratitude:</span>
+    <div class="spinner-grow text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <div class="spinner-grow text-success" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
     <h1>Большое спасибо</h1>
-        <h2>Ilya Boyarnikov, за обучение основным принципам работы веб решений на базе Flask</h2>
-        <h2>Miguel Grinderg, за фундаментальную методичку по написанию своего микроблога</h2>
+    <div class="card text-bg-primary mb-3" style="max-width: 75rem;">
+      <div class="card-header">Thanks</div>
+      <div class="card-body">
+        <h5 class="card-title">Ilya Boyarnikov</h5>
+        <p class="card-text">За обучение основным принципам работы веб решений на базе Flask</p>
+      </div>
+    </div>
+    <div class="card text-bg-success mb-3" style="max-width: 75rem;">
+        <div class="card-header">Thanks</div>
+        <div class="card-body">
+          <h5 class="card-title">Miguel Grinderg</h5>
+          <p class="card-text">За фундаментальную методичку по написанию своего микроблога</p>
+          <div class="container text-center">
+            <div class="row row-cols-2">
+              <div class="col"></div>
+            </div>
+          </div>
+        </div>
+    </div>
+<span class="badge rounded-pill text-bg-success">Sources:</span>
+<h1>Ресурсы:</h1>
+<div class="row">
+  <div class="col-sm-6 mb-3 mb-sm-0">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Flask</h5>
+        <p class="card-text">Press the button below to go to Flask doc</p>
+        <a href="http://flask.pocoo.org/" class="btn btn-primary">Flask doc</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-5">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Bootstrap</h5>
+        <p class="card-text">Press the button below to go to Bootstrap doc</p>
+        <a href="https://getbootstrap.com/docs/5.3/getting-started/introduction/" class="btn btn-primary">Bootstrap doc</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-6 mb-3 mb-sm-0">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Jinja</h5>
+        <p class="card-text">Press the button below to go to Jinja doc</p>
+        <a href="https://jinja.palletsprojects.com/en/3.1.x/" class="btn btn-primary">Jinja doc</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-5">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">JSON Web Tokens</h5>
+        <p class="card-text">Press the button below to go to JSON Web Tokens</p>
+        <a href="https://jwt.io/" class="btn btn-primary">JSON Web Tokens</a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-6 mb-3 mb-sm-0">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Gravatar</h5>
+        <p class="card-text">Press the button below to go to Gravatar API</p>
+        <a href="https://gravatar.com/" class="btn btn-primary">Gravatar</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-5">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">SendGrid</h5>
+        <p class="card-text">Press the button below to go to SendGrid SMTP API</p>
+        <a href="https://signup.sendgrid.com/" class="btn btn-primary">SendGrid SMTP API</a>
+      </div>
+    </div>
+  </div>
+</div>
+    <img src="https://fractus.com.ua/wp-content/uploads/2022/06/blog.jpg" class="img-fluid" alt="Микроблог">
 {% endblock %}

@@ -5,14 +5,17 @@ import sqlalchemy.orm as so
 from app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from app import login
+from app import login, app
 from hashlib import md5
+from time import time
+import jwt
 
 followers = sa.Table('followers', db.metadata,
                      sa.Column('follower_id',
-                           sa.Integer, sa.ForeignKey('user.id'), primary_key=True),
-    sa.Column('followed_id', sa.Integer, sa.ForeignKey('user.id'), primary_key=True)
-)
+                               sa.Integer, sa.ForeignKey('user.id'), primary_key=True),
+                     sa.Column('followed_id', sa.Integer, sa.ForeignKey('user.id'), primary_key=True)
+                     )
+
 
 @login.user_loader
 def load_user(id):
@@ -37,6 +40,7 @@ class User(UserMixin, db.Model):
         secondary=followers, primaryjoin=(followers.c.followed_id == id),
         secondaryjoin=(followers.c.follower_id == id),
         back_populates='following')
+
     def __repr__(self):
         return f'<User: {self.username}, email: {self.email}, id: {self.id}>'
 
@@ -90,11 +94,27 @@ class User(UserMixin, db.Model):
             .order_by(Post.timestamp.desc())
         )
 
+    def get_reset_password_token(self, expires_in=600):
+        """Создание токена для сброса пароля и возвращает JWT token"""
+        return jwt.encode(
+            {'reset_password': self.id,
+             'exp': time() + expires_in},
+            app.config['SECRET_KEY'],
+            algorithm='HS256')
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return db.session.get(User, id)
+
 
 class Post(db.Model):
     """Модель постов"""
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    body: so.Mapped[str] = so.mapped_column(sa.String(256))
+    body: so.Mapped[str] = so.mapped_column(sa.String(512))
     timestamp: so.Mapped[datetime] = so.mapped_column(
         index=True, default=lambda: datetime.now(timezone.utc))
     user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey(User.id),

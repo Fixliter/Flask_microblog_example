@@ -17,6 +17,6 @@ class Config:
     ADMINS = ['anton_krayushkin@mail.ru']
 
     # для настройки количества постов на странице в рамках пагинации
-    POSTS_PER_PAGE_INDEX = 3
-    POSTS_PER_PAGE_EXPLORE = 5
-    POSTS_PER_PAGE_PROFILE = 3
+    POSTS_PER_PAGE_INDEX = 10
+    POSTS_PER_PAGE_EXPLORE = 15
+    POSTS_PER_PAGE_PROFILE = 10
