@@ -94,8 +94,4 @@ query = sa.select(User).where(User.username.like('k%'))
 print(db.session.scalars(query).all())
 
 
-# проверка пароля (НЕДОДЕЛАНО)
-u = db.session.get(User, 1)
-query = u.password_hash.select()
-password_hash = db.session.scalars(query)
-print(posts)
+
