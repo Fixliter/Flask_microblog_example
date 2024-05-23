@@ -20,3 +20,6 @@ class Config:
     POSTS_PER_PAGE_INDEX = 10
     POSTS_PER_PAGE_EXPLORE = 15
     POSTS_PER_PAGE_PROFILE = 10
+
+    # управления языками сайта
+    LANGUAGES = ['en', 'ru']
